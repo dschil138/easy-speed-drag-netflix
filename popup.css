@@ -1,0 +1,319 @@
+body {
+  background-color: #282c34;
+  color: #abb2bf;
+  font-family: Arial, sans-serif;
+  width: 44em;
+}
+h1, h2, p {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+p {
+  font-size: 14px;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: auto;
+  margin-bottom: 3em;
+  padding: 10px;
+  width: 90%;
+}
+
+/* .main-button-group, .left-speed-button-group, .right-speed-button-group, .leftest-speed-button-group, .rightest-speed-button-group {
+  display: row;
+  flex-direction: column;
+  padding-right: 15px;
+  padding-left: 15px;
+} */
+
+.button-group {
+  display: row;
+  flex-direction: column;
+  padding-right: 5px;
+  padding-left: 5px;
+  margin: 0.05em 0;
+}
+
+.leftest-button-group {
+  padding-left: 0px !important;
+  margin-left: 0px !important;
+} 
+
+.rightest-button-group {
+  padding-right: 0px !important;
+  margin-right: 0px !important;
+} 
+
+.main-button-group {
+  margin-left: 2em !important;
+  margin-right: 2em !important;
+} 
+
+
+
+
+.inputs-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left-input,
+.right-input {
+  flex-grow: 1;
+  text-align: center; 
+  margin-bottom: 1em;
+}
+
+.label {
+  margin-bottom: 0.5em !important;
+}
+
+.hotkey-label {
+  margin-top: 0em !important;
+}
+/* 
+#period-quantity, #comma-quantity {
+  margin-bottom: 1em;
+} */
+
+
+
+
+/* 
+body {
+  font-family: Arial, sans-serif;
+  padding: 15px;
+} */
+
+.switch-container {
+  margin: 10px 0;
+  margin-bottom: 0px;
+  text-align: center;
+}
+
+/* Styling for the label */
+label {
+  display: block;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 54px;
+  height: 32px;
+}
+
+.small-switch {
+  position: relative;
+  display: inline-block;
+  width: 45px;
+  height: 24px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 24px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.small-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 4px;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.small-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  border-radius: 4px;
+
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(19px);
+  -ms-transform: translateX(19px);
+  transform: translateX(19px);
+}
+
+input:checked + .small-slider {
+  background-color: #2196F3;
+}
+
+input:focus + .small-slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .small-slider:before {
+  -webkit-transform: translateX(21px);
+  -ms-transform: translateX(21px);
+  transform: translateX(21px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 4px;
+}
+
+.slider.round:before {
+  border-radius: 4px;
+}
+
+.small-slider.round {
+  border-radius: 4px;
+}
+.small-slider.round:before {
+  border-radius: 4px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.number-input {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Center-align vertically */
+  width: 6.5em;
+  margin: auto;
+}
+
+
+/* .number-input button {
+  width: 1.2em; 
+  height: 0.93em; 
+  font-size: 16px;
+  margin: 0;
+  border-radius: 4px;
+} */
+
+/* #min-quantity, #slow-quantity, #main-quantity, #fast-quantity, #max-quantity {
+  width: 2.2em; 
+  height: 1.6em;
+  font-size: 16px; 
+  text-align: center;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  border: 1px solid #2196F3; 
+  border-radius: 4px;
+} */
+
+.quantity-box {
+  width: 2.2em; 
+  height: 1.5em;
+  font-size: 18px; 
+  text-align: center;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  border: 1px solid #2196F3; 
+  border-radius: 4px;
+}
+
+/* Remove arrows from input for webkit browsers */
+/* #min-quantity::-webkit-outer-spin-button, #min-quantity::-webkit-inner-spin-button, #slow-quantity::-webkit-outer-spin-button, #slow-quantity::-webkit-inner-spin-button, #main-quantity::-webkit-outer-spin-button, #main-quantity::-webkit-inner-spin-button, #fast-quantity::-webkit-outer-spin-button, #fast-quantity::-webkit-inner-spin-button, #max-quantity::-webkit-outer-spin-button, #max-quantity::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+} */
+
+.quantity-box::-webkit-outer-spin-button, .quantity-box::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+.button-container {
+  display: flex; 
+  flex-direction: column; /* Stack buttons vertically */
+  margin-left: 0.15em;
+  /* margin-right: 0.6em; */
+}
+
+.svg-button {
+  width: 1.3em; /* Adjust width as needed */
+  height: 0.9em; /* Adjust height for half of the input box to stack properly */
+  margin-bottom: 0.05em; /* Space between buttons */
+  background-color: white;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+.svg-button:last-child {
+  margin-bottom: 0; /* No margin for the last button */
+}
+
+.svg-button svg {
+  display: block; /* To prevent inline SVG aligning issues */
+  margin: auto; /* To center SVG in the button */
+}
+

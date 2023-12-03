@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Popup</title>
+  <link rel="stylesheet" type="text/css" href="popup.css">
+</head>
+<body>
+  <h1>EasySpeed For YouTube</h1>
+
+  <div class="switch-container">
+    <label for="toggleSwitch">Enable Extension:</label>
+    <label class="switch">
+        <input type="checkbox" id="toggleSwitch" checked>
+        <span class="slider round"></span>
+    </label>
+  </div>
+
+  <div class="switch-container">
+    <label for="adSkipToggleSwitch">Auto-Skip Ads:</label>
+    <label class="switch">
+        <input type="checkbox" id="adSkipToggleSwitch" checked>
+        <span class="slider round"></span>
+    </label>
+  </div>
+
+
+  <div class="container">
+    <div class="leftest-button-group button-group">
+      <p>Full Drag<br>Left</p>
+      <div class="number-input">
+        <input type="number" id="min-quantity" class="quantity-box" step="0.25" min="0" max="16" value="1.2">
+        <div class="button-container">
+          <button id="incrementMin" class="svg-button">
+            <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,5 5,0 10,5" fill="currentColor"/></svg>
+          </button>
+          <button id="decrementMin" class="svg-button">
+              <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,0 5,5 10,0" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="left-button-group button-group">
+      <p>Half Drag<br>Left</p>
+      <div class="number-input">
+        <input type="number" id="slow-quantity" class="quantity-box" step="0.25" min="0" max="16" value="1.5">
+        <div class="button-container">
+          <button id="incrementSlow" class="svg-button">
+            <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,5 5,0 10,5" fill="currentColor"/></svg>
+          </button>
+          <button id="decrementSlow" class="svg-button">
+              <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,0 5,5 10,0" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-button-group button-group">
+    <p>Held<br>Click</p>
+    <div class="number-input">
+      <input type="number" id="main-quantity" class="quantity-box" step="0.25" min="0" max="16" value="2">
+      <div class="button-container">
+        <button id="incrementMain" class="svg-button">
+          <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,5 5,0 10,5" fill="currentColor"/></svg>
+        </button>
+        <button id="decrementMain" class="svg-button">
+            <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,0 5,5 10,0" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </div>
+    </div>
+
+    <div class="right-button-group button-group">
+      <p>Half Drag<br>Right</p>
+      <div class="number-input">
+        <input type="number" id="fast-quantity" class="quantity-box" step="0.25" min="0" max="16" value="3">
+        <div class="button-container">
+          <button id="incrementFast" class="svg-button">
+            <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,5 5,0 10,5" fill="currentColor"/></svg>
+          </button>
+          <button id="decrementFast" class="svg-button">
+              <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,0 5,5 10,0" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="rightest-button-group button-group">
+      <p>Full Drag<br>Right</p>
+      <div class="number-input">
+        <input type="number" id="max-quantity" class="quantity-box" step="0.25" min="0" max="16" value="5">
+        <div class="button-container">
+          <button id="incrementMax" class="svg-button">
+            <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,5 5,0 10,5" fill="currentColor"/></svg>
+          </button>
+          <button id="decrementMax" class="svg-button">
+              <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,0 5,5 10,0" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+
+  <div class="switch-container">
+    <label for="keysToggleSwitch">Enable HotKeys</label>
+    <label class="small-switch">
+        <input type="checkbox" id="keysToggleSwitch" checked>
+        <span class="small-slider small-round"></span>
+    </label>
+  </div>
+
+  <div class="inputs-container">
+
+    
+    
+    <div class="left-input">
+      <p class="hotkey-label label">Comma Held Speed</p>
+      <div class="number-input">
+      <input type="number" id="comma-quantity" class="quantity-box"  step="0.25" min="0" max="10" value="2">
+      <div class="button-container">
+        <button id="incrementComma" class="svg-button">
+          <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,5 5,0 10,5" fill="currentColor"/></svg>
+        </button>
+        <button id="decrementComma" class="svg-button">
+            <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,0 5,5 10,0" fill="currentColor"/></svg>
+        </button>
+      </div>
+      </div>
+    </div>
+    <div class="right-input">
+      <p class="hotkey-label label">Period Held Speed</p>
+      <div class="number-input">
+      <input type="number" id="period-quantity" class="quantity-box"  step="0.25" min="0" max="10" value="5">
+      <div class="button-container">
+        <button id="incrementPeriod" class="svg-button">
+          <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,5 5,0 10,5" fill="currentColor"/></svg>
+        </button>
+        <button id="decrementPeriod" class="svg-button">
+            <svg viewBox="0 0 10 5" width="10" height="5"><polygon points="0,0 5,5 10,0" fill="currentColor"/></svg>
+        </button>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Easy Speed Drag Netflix",
+  "version": "0.3",
+  "description": "Click & drag left or right on Netflix videos to adjust the playback speed.",
+  "permissions": ["activeTab", "storage"],
+  "content_scripts": [
+    {
+      "matches": ["*://www.netflix.com/*"],
+      "css": ["styles.css"],
+      "js": [ "utils.js", "content.js", "handlers.js"],
+      "all_frames": true,
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "images/16.png",
+    "32": "images/32.png",
+    "48": "images/48.png",
+    "64": "images/64.png",
+    "128": "images/128.png"
+  }
+}
