@@ -1,13 +1,10 @@
-# DragSpeed For YouTube
+# Easy Speed Drag For Netflix
 
-![banner2](https://github.com/dschil138/easyspeed-for-youtube/assets/11950317/05f1b76f-a17c-4d1c-9ec6-2036dbec9a03)
-
+<!-- ![banner2](https://github.com/dschil138/easyspeed-for-youtube/assets/11950317/05f1b76f-a17c-4d1c-9ec6-2036dbec9a03)
+ -->
 
 #### Available in the [Chrome Store](https://chromewebstore.google.com/detail/easyspeed-for-youtube/lmcggcabhocpfkbddekmconplfjmmgmn)
-A Chrome extension that lets you click and drag left/right on a Youtube video to adjust the playback speed.
-
-Very helpful for quickly skimming sections of a video you are not interested in, or just changing the speed without having to navigate the settings menu.
-
+A Chrome extension that lets you click and drag left/right on Netflix videos to adjust the playback speed.
 
 ## Selecting a Speed
 

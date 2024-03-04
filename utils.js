@@ -13,7 +13,7 @@ const verticalTier = 60;
 let dynamicTier1 = tier1, dynamicTier2 = tier2, dynamicTier3 = tier3, dynamicVerticalTier = verticalTier;
 let url = '';
 let mouseIsDown = false;
-const isDebugMode = true;
+const isDebugMode = false;
 
 
 
@@ -39,10 +39,23 @@ function addIndicator(video, rate) {
     indicator.innerText = `${rate}x Speed${rate === 16 ? ' (max)' : ''}`;
     indicator.style.fontSize = '2.5em';
     indicator.style.fontWeight = 'normal';
-    indicator.style.backgroundColor = 'rgba(60, 60, 60, 0.35)';
+    indicator.style.backgroundColor = 'rgba(0, 0, 0, 0.45)';
     indicator.style.display = 'block';
-    let offset = video.clientHeight / 20
+    let offset = video.clientHeight / 12
     indicator.style.top = `${offset}px`;
+}
+
+
+function addHotkeyIndicator(video, rate) {
+    indicator.innerText = `${rate}x Speed${rate === 16 ? ' (max)' : ''}`;
+    indicator.style.fontWeight = 'bold';
+    indicator.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    indicator.style.display = 'block';
+    let offset = video.clientHeight / 30
+    indicator.style.top = `${offset}px`;
+    setTimeout(() => {
+        indicator.style.display = 'none';
+    }, 1250);
 }
 
 function findOriginalSpeed() {
@@ -55,6 +68,11 @@ function findOriginalSpeed() {
     });
 }
 
+function delayedSetPlayback(video, rate, delay) {
+    setTimeout(() => {
+        video.playbackRate = rate;
+    }, delay);
+}
 
 function simulateLeftArrowKeyPress() {
     if (!extensionEnabled) return;

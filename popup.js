@@ -1,13 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
   let addedListeners = false;
-  // const isDebugMode = true;
-
-
-  // function log(...args) {
-  //   if (isDebugMode) {
-  //       console.log(...args);
-  //   }
-  // }
 
   function handleInput(inputId, storageKey) {
     const inputElement = document.querySelector(inputId);
@@ -18,15 +10,14 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Load any previously saved settings
   chrome.storage.sync.get(['minSpeed', 'slowSpeed', 'mainSpeed', 'fastSpeed', 'maxSpeed', 'commaKeySpeed', 'periodKeySpeed'], function(data) {
-
     const commaKeySpeed = data.commaKeySpeed || 2;
     const periodKeySpeed = data.periodKeySpeed || 5;
 
-    const minSpeed = data.minSpeed || 1.2;
-    const slowSpeed = data.slowSpeed || 1.5;
-    const mainSpeed = data.mainSpeed || 2;
-    const fastSpeed = data.fastSpeed || 3;
-    const maxSpeed = data.maxSpeed || 5;
+    const minSpeed = data.minSpeed || 1.1;
+    const slowSpeed = data.slowSpeed || 1.2;
+    const mainSpeed = data.mainSpeed || 1.5;
+    const fastSpeed = data.fastSpeed || 2;
+    const maxSpeed = data.maxSpeed || 3;
 
     document.querySelector('#period-quantity').value = periodKeySpeed;
     document.querySelector('#comma-quantity').value = commaKeySpeed;
@@ -36,19 +27,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('main-quantity').value = mainSpeed;
     document.getElementById('fast-quantity').value = fastSpeed;
     document.getElementById('max-quantity').value = maxSpeed;
-
   });
 
 
   const toggleSwitch = document.getElementById('toggleSwitch');
   const keysToggleSwitch = document.getElementById('keysToggleSwitch');
-  // const adSkipToggleSwitch = document.getElementById('adSkipToggleSwitch');
 
 
-  chrome.storage.sync.get(['extensionEnabled', 'hotkeysEnabled',  'adSkipEnabled'], function(data) {
+  chrome.storage.sync.get(['extensionEnabled', 'hotkeysEnabled'], function(data) {
     toggleSwitch.checked = data.extensionEnabled !== undefined ? data.extensionEnabled : true;
     keysToggleSwitch.checked = data.hotkeysEnabled !== undefined ? data.hotkeysEnabled : true;
-    adSkipToggleSwitch.checked = data.adSkipEnabled !== undefined ? data.adSkipEnabled : true;
   });
   
 
@@ -98,12 +86,6 @@ document.addEventListener('DOMContentLoaded', function() {
       runInit();
     });
 
-    adSkipToggleSwitch.addEventListener('input', function() {
-      chrome.storage.sync.set({'adSkipEnabled': this.checked}, function() {
-      });
-      runInit();
-    });
-
     addedListeners = true;
   }
 
@@ -111,12 +93,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // function to send message to re-run init function in content.js
   function runInit() {
-    // log("runInit from popup");
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       chrome.tabs.sendMessage(tabs[0].id, {action: "runInit"});
     });
   }
-
-
 
 });

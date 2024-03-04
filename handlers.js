@@ -1,15 +1,27 @@
 
 let hotkeyOriginalSpeed = 1;
-// let originalSpeed = 1;
 let isPeriodKeyDown = false, isCommaKeyDown = false, periodPressed = false, commaPressed = false, doubleTapAndHoldPeriod = false, doubleTapAndHoldComma = false, keydownTimer, lastPeriodKeyReleaseTime = 0, lastCommaKeyReleaseTime = 0;
 let tempPause = false;
 
-// ytp-settings-menu
 
+
+
+let tapTimeoutPeriod;
+let wasPeriodKeyHeld = false;
+let tapTimeoutComma;
+let wasCommaKeyHeld = false;
+
+// if video is paused, hotkeys do nothing (preserves native hotkey function of frame scrubbing). If video is playing, a tap on the hot keys will initiate fine speed control. Holding the hot keys will initiate tier1 speeds, tap-hold will initiate tier2 speeds.
 function keydownHandler(e) {
     if (!extensionEnabled || !hotkeysEnabled) return;
 
+    const video = document.querySelector('video');
+    if (video.paused) return;
+
+
     if (e.key === '.') {
+        clearTimeout(tapTimeoutPeriod); // Clear any existing timeout to prevent interference
+
         let currentTimeStamp = Date.now();
         let timeDifference = currentTimeStamp - lastPeriodKeyReleaseTime;
 
@@ -17,62 +29,127 @@ function keydownHandler(e) {
             doubleTapAndHoldPeriod = true;
         }
 
-        // double tap and hold period will give us double speed, up to max of 16x
         if (doubleTapAndHoldPeriod) {
             isPeriodKeyDown = true;
-            video.playbackRate = Math.min(periodKeySpeed * 2, 16);
-            addIndicator(video, Math.min(periodKeySpeed * 2, 16));
+            video.playbackRate = maxSpeed;
+            addIndicator(video, maxSpeed);
+            wasPeriodKeyHeld = true;
         } else {
-            video.playbackRate = periodKeySpeed;
-            addIndicator(video, periodKeySpeed);
+            tapTimeoutPeriod = setTimeout(() => {
+                wasPeriodKeyHeld = true;
+                video.playbackRate = fastSpeed;
+                addIndicator(video, fastSpeed);
+            }, 200);
         }
 
     } else if (e.key === ',') {
+        clearTimeout(tapTimeoutComma);
+
         let currentTimeStamp = Date.now();
         let timeDifference = currentTimeStamp - lastCommaKeyReleaseTime;
 
         if (timeDifference < 400) {
             doubleTapAndHoldComma = true;
         }
-        // double tap and hold comma will give us 0.75x speed
+
         if (doubleTapAndHoldComma) {
             isCommaKeyDown = true;
-            video.playbackRate = 0.75;
-            addIndicator(video, 0.75);
+            video.playbackRate = minSpeed;
+            addIndicator(video, minSpeed);
+            wasCommaKeyHeld = true;
         } else {
-            video.playbackRate = commaKeySpeed;
-            addIndicator(video, commaKeySpeed);
+            tapTimeoutComma = setTimeout(() => {
+                wasCommaKeyHeld = true;
+                video.playbackRate = slowSpeed;
+                addIndicator(video, slowSpeed);
+            }, 200);
         }
     }
+
+    else if (e.key === 'r') {
+        video.playbackRate = 1;
+        addHotkeyIndicator(video, 1);
+    }
+
 };
 
 
 function keyupHandler(e) {
+    if (video.paused) return;
+
+    // PERIOD KEY
     if (e.key === '.') {
-        doubleTapAndHoldPeriod = false;
         lastPeriodKeyReleaseTime = Date.now();
+
+        clearTimeout(tapTimeoutPeriod);
+        if (!wasPeriodKeyHeld) {
+            setTimeout(() => {
+                if (Date.now() - lastPeriodKeyReleaseTime >= 350) {
+                    if (!doubleTapAndHoldPeriod) {
+                        let adjustedSpeed = video.playbackRate + 0.05;
+                        adjustedSpeed = Math.round(adjustedSpeed * 100) / 100;
+
+                        newSpeed(adjustedSpeed);
+                        addHotkeyIndicator(video, adjustedSpeed);
+                    }
+                }
+            }, 350); 
+        }
+        else {
+            indicator.style.display = 'none';
+            video.playbackRate = 1;
+        }
+        doubleTapAndHoldPeriod = false;
         isPeriodKeyDown = false;
-        indicator.style.display = 'none';
-        if (!isPeriodKeyDown) {
-            video.playbackRate = 1;
-        }
+        wasPeriodKeyHeld = false;
     }
+    // COMMA KEY
     if (e.key === ',') {
-        doubleTapAndHoldComma = false;
         lastCommaKeyReleaseTime = Date.now();
-        isCommaKeyDown = false;
-        indicator.style.display = 'none';
-        if (!isCommaKeyDown) {
+
+        clearTimeout(tapTimeoutComma);
+        if (!wasCommaKeyHeld) {
+            setTimeout(() => {
+                if (Date.now() - lastCommaKeyReleaseTime >= 350) {
+                    if (!doubleTapAndHoldComma) {
+                    let adjustedSpeed = video.playbackRate - 0.05;
+                    adjustedSpeed = Math.round(adjustedSpeed * 100) / 100;
+
+                    newSpeed(adjustedSpeed);
+                    addHotkeyIndicator(video, adjustedSpeed);
+                    }
+                }
+            }, 350); 
+            
+        }
+        else {
+            indicator.style.display = 'none';
             video.playbackRate = 1;
         }
+        doubleTapAndHoldComma = false;
+        isCommaKeyDown = false;
+        wasCommaKeyHeld = false;
     }
 };
 
 
 
+function getOriginalSpeed() {
+    return new Promise((resolve, reject) => {
+        if (!speedPersisting) {
+            log("mousedown NOT speedPersisting. Original speed:", originalSpeed);
+            originalSpeed = video.playbackRate;
+            log("mousedown set originalSpeed to:", originalSpeed);
+        }
+        resolve();
+    });
+}
+
+
 // MOUSE DOWN HANDLER
-function mousedownHandler(moviePlayer, video, e) {
-    log("mouse down", video);
+async function mousedownHandler(moviePlayer, video, e) {
+    log("mouse down");
+    await getOriginalSpeed();
     if (!extensionEnabled) return;
     if (longPressTimer) clearTimeout(longPressTimer);
     longPressFlag = false;
@@ -84,7 +161,7 @@ function mousedownHandler(moviePlayer, video, e) {
 
     const elements = document.elementsFromPoint(e.clientX, e.clientY);
 
-    const classList = ['show', 'ytp-progress-bar-padding',];
+    const classList = ['show'];
 
     if (elements.some(el => classList.some(cls => el.classList.contains(cls)))) {
         log("mousedown return early element");
@@ -92,11 +169,9 @@ function mousedownHandler(moviePlayer, video, e) {
     }
 
 
-
     longPressTimer = setTimeout(async () => {
-        if (!speedPersisting) {
-            originalSpeed = video.playbackRate;
-        }
+        
+        log("long press");
         longPressFlag = true;
         addIndicator(video, mainSpeed);
         video.playbackRate = mainSpeed;
@@ -106,7 +181,7 @@ function mousedownHandler(moviePlayer, video, e) {
 
 // MOUSE UP HANDLER
 function mouseupHandler(moviePlayer, video, e) {
-    log("mouse up", video);
+    log("mouse up");
     log("setPersistentSpeed", setPersistentSpeed);
 
 
@@ -131,18 +206,12 @@ function mouseupHandler(moviePlayer, video, e) {
     }
 
     if (longPressFlag) {
-        log("long press");
-        // longPressFlag = false;
-
-        if (speedPersisting && !setPersistentSpeed) {
-            video.playbackRate = originalSpeed;
-            speedPersisting = false;
-
-        } else if (setPersistentSpeed) {
-            video.playbackRate = newPersistentSpeed;
+        if (setPersistentSpeed) { //speed wasn't persisting but we're trying to set it to persist now
+            delayedSetPlayback(video, newPersistentSpeed, 50);
             speedPersisting = true;
-        } else {
-            video.playbackRate = originalSpeed;
+        } else { //speed wasn't persisting and we didn't set it to persist, go back to original speed
+            log("mouseup ELSE. Original speed:", originalSpeed);
+            delayedSetPlayback(video, originalSpeed, 50);
             speedPersisting = false;
         }
 
@@ -158,8 +227,7 @@ function mouseupHandler(moviePlayer, video, e) {
 
 // CLICK HANDLER
 function clickHandler(moviePlayer, video, e) {
-    log("click", video);
-    log("setPersistentSpeed", setPersistentSpeed);
+    log("mouseclick");
     if (!extensionEnabled) return;
     mouseIsDown = false;
     clearTimeout(longPressTimer);
@@ -167,59 +235,11 @@ function clickHandler(moviePlayer, video, e) {
     rewindInterval = null;
 
     if (longPressFlag) {
-        log("long press");
+        log("ending long press");
         longPressFlag = false;
-
-        if (speedPersisting && !setPersistentSpeed) {
-            video.playbackRate = originalSpeed;
-            speedPersisting = false;
-
-        } else if (setPersistentSpeed) {
-            video.playbackRate = newPersistentSpeed;
-            speedPersisting = true;
-        } else {
-            video.playbackRate = originalSpeed;
-            speedPersisting = false;
-        }
 
         e.stopPropagation();
         e.preventDefault();
-    }
-}
-
-
-function handleMouseLeave(moviePlayer, video, e) {
-    log("mouse leave");
-    // get elements at mouse position
-    const elements = document.elementsFromPoint(e.clientX, e.clientY);
-    // if #movie_player is one of them, return early
-    if (elements.some(el => el.id === 'movie_player')) {
-        log("returning bc mouse is over movie player");
-        return;
-    } else {
-        log("left Movie Player");
-        indicator.style.display = 'none';
-        mouseIsDown = false;
-        clearInterval(rewindInterval);
-        clearTimeout(longPressTimer);
-        rewindInterval = null;
-        firstRewind = true;
-        if (longPressFlag) {
-
-            if (speedPersisting && !setPersistentSpeed) {
-                video.playbackRate = originalSpeed;
-                speedPersisting = false;
-
-            } else if (setPersistentSpeed) {
-                video.playbackRate = newPersistentSpeed;
-                speedPersisting = true;
-            } else {
-                video.playbackRate = originalSpeed;
-                speedPersisting = false;
-            }
-
-            longPressFlag = false;
-        }
     }
 }
 
@@ -229,7 +249,7 @@ function handleMouseMove(moviePlayer, video, e) {
     if (!extensionEnabled || !longPressFlag) return;
 
     // make it a bit easier to work with smaller videos
-    width = moviePlayer.clientWidth;
+    width = video.clientWidth;
     if (width < 450) {
         dynamicTier1 = tier1 / 1.8;
         dynamicTier2 = tier2 / 1.8;
@@ -259,7 +279,7 @@ function handleMouseMove(moviePlayer, video, e) {
         if (!rewindInterval) {
             rewindInterval = setInterval(() => {
                 simulateLeftArrowKeyPress()
-            }, 500);
+            }, 800);
         }
     } else if (deltaX < -dynamicTier2) {
         newSpeed(minSpeed);
@@ -274,11 +294,11 @@ function handleMouseMove(moviePlayer, video, e) {
         setPersistentSpeed = true;
         newPersistentSpeed = video.playbackRate;
         indicator.style.fontWeight = 'bold';
-        indicator.style.backgroundColor = 'rgba(60, 60, 60, 0.7)';
+        indicator.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
     } else {
         setPersistentSpeed = false;
         indicator.style.fontWeight = 'normal';
-        indicator.style.backgroundColor = 'rgba(60, 60, 60, 0.35)';
+        indicator.style.backgroundColor = 'rgba(0, 0, 0, 0.45)';
     }
 }
 
