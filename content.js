@@ -18,6 +18,7 @@ chrome.runtime.onMessage.addListener(
 
 function syncSpeeds() {
   log("sync speeds");
+  const wasEnabled = extensionEnabled;
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get(['minSpeed', 'slowSpeed', 'mainSpeed', 'fastSpeed', 'maxSpeed', 'periodKeySpeed', 'commaKeySpeed', 'extensionEnabled', 'hotkeysEnabled'], function(data) {
       minSpeed = data.minSpeed !== undefined ? data.minSpeed : 1.1;
@@ -29,6 +30,11 @@ function syncSpeeds() {
       commaKeySpeed = data.commaKeySpeed !== undefined ? data.commaKeySpeed : 2;
       extensionEnabled = data.extensionEnabled !== undefined ? data.extensionEnabled : true;
       hotkeysEnabled = data.hotkeysEnabled !== undefined ? data.hotkeysEnabled : true;
+
+      if (wasEnabled !== extensionEnabled && extensionEnabled) {
+        init();
+      }
+
       resolve();
     });
   });
