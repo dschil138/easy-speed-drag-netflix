@@ -1,3 +1,4 @@
+let isDebugMode = false;
 let video, moviePlayer;
 let longPressTimer, longPressFlag = false;
 let originalSpeed = 1, minSpeed = 1.1, slowSpeed = 1.2, mainSpeed = 1.5, fastSpeed = 2, maxSpeed = 3, periodKeySpeed = 5, commaKeySpeed = 2;
@@ -9,11 +10,13 @@ let extensionEnabled = true, hotkeysEnabled = true;
 const tier1 = 50;
 const tier2 = 180;
 const tier3 = 330;
-const verticalTier = 60;
+const verticalTier = 90;
 let dynamicTier1 = tier1, dynamicTier2 = tier2, dynamicTier3 = tier3, dynamicVerticalTier = verticalTier;
 let url = '';
 let mouseIsDown = false;
-const isDebugMode = false;
+
+// uncomment to enable debug mode
+// isDebugMode = true;
 
 
 
@@ -26,31 +29,55 @@ function log(...args) {
     }
 }
 
-function newSpeed(rate) {
+function newSpeed(findicator, video, rate) {
+    // let findicator = document.querySelector('.indicator');
+    // video.parentElement.querySelectorAll('.indicator').forEach((el) => {
+    //     findicator = el;
+    // });
     video.playbackRate = rate;
-    indicator.innerText = `${rate}x Speed`;
+    findicator.innerText = `${rate}x Speed`;
     clearInterval(rewindInterval);
     rewindInterval = null;
     firstRewind = true;
 }
 
 
-function addIndicator(video, rate) {
-    indicator.innerText = `${rate}x Speed${rate === 16 ? ' (max)' : ''}`;
-    indicator.style.fontSize = '2.5em';
-    indicator.style.fontWeight = 'normal';
-    indicator.style.backgroundColor = 'rgba(0, 0, 0, 0.45)';
-    indicator.style.display = 'block';
-    let offset = video.clientHeight / 12
-    indicator.style.top = `${offset}px`;
+function addIndicator(findicator, fvideo, rate) {
+    // query selector to find div with class 'indicator'
+    // let findicator = document.querySelector('.indicator');
+
+    // search parent element for div with class 'indicator'. then assign it to "findicator" variable
+    // fvideo.parentElement.querySelectorAll('.indicator').forEach((el) => {
+    //     findicator = el;
+    // });
+
+    // log('findicator1', findicator);
+
+    // if (!findicator) {
+    //     log("in if for findicator")
+    //     findicator = document.createElement('div');
+    //     findicator.classList.add('indicator');
+    //     fvideo.parentElement.appendChild(findicator);
+    //     log('findicator2', findicator);
+    // }
+
+    findicator.innerText = `${rate}x Speed${rate === 16 ? ' (max)' : ''}`;
+    findicator.style.fontSize = '2.5em';
+    findicator.style.fontWeight = 'normal';
+    findicator.style.backgroundColor = 'rgba(50, 50, 50, 0.45)';
+    findicator.style.display = 'block';
+    findicator.style.zIndex = '9999';
+    let offset = fvideo.clientHeight / 12
+    findicator.style.top = `${offset}px`;
 }
 
 
 function addHotkeyIndicator(video, rate) {
     indicator.innerText = `${rate}x Speed${rate === 16 ? ' (max)' : ''}`;
     indicator.style.fontWeight = 'bold';
-    indicator.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    indicator.style.backgroundColor = 'rgba(50, 50, 50, 0.7)';
     indicator.style.display = 'block';
+    indicator.style.zIndex = '9999';
     let offset = video.clientHeight / 30
     indicator.style.top = `${offset}px`;
     setTimeout(() => {
@@ -74,10 +101,11 @@ function delayedSetPlayback(video, rate, delay) {
     }, delay);
 }
 
-function simulateLeftArrowKeyPress() {
+function simulateLeftArrowKeyPress(fvideo) {
     if (!extensionEnabled) return;
+    log('simulateLeftArrowKeyPress');
 
-    video.focus();
+    fvideo.focus();
     const leftArrowKeyCode = 37;
     const downEvent = new KeyboardEvent('keydown', {
         key: 'ArrowLeft',
@@ -87,7 +115,7 @@ function simulateLeftArrowKeyPress() {
         bubbles: true,
         cancelable: true
     });
-    video.dispatchEvent(downEvent);
+    fvideo.dispatchEvent(downEvent);
 
     const upEvent = new KeyboardEvent('keyup', {
         key: 'ArrowLeft',
@@ -97,7 +125,7 @@ function simulateLeftArrowKeyPress() {
         bubbles: true,
         cancelable: true
     });
-    video.dispatchEvent(upEvent);
+    fvideo.dispatchEvent(upEvent);
 }
 
 function simulateCommaKeyPress() {

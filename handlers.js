@@ -11,7 +11,8 @@ let wasPeriodKeyHeld = false;
 let tapTimeoutComma;
 let wasCommaKeyHeld = false;
 
-// if video is paused, hotkeys do nothing (preserves native hotkey function of frame scrubbing). If video is playing, a tap on the hot keys will initiate fine speed control. Holding the hot keys will initiate tier1 speeds, tap-hold will initiate tier2 speeds.
+    // if video is paused, hotkeys do nothing (preserves native hotkey function of frame scrubbing). If video is playing, a tap on the hot keys will initiate fine speed control. Holding the hot keys will initiate tier1 speeds, tap-hold will initiate tier2 speeds.
+
 function keydownHandler(e) {
     if (!extensionEnabled || !hotkeysEnabled) return;
 
@@ -20,6 +21,7 @@ function keydownHandler(e) {
 
 
     if (e.key === '.') {
+        log("period key down");
         clearTimeout(tapTimeoutPeriod); // Clear any existing timeout to prevent interference
 
         let currentTimeStamp = Date.now();
@@ -32,17 +34,18 @@ function keydownHandler(e) {
         if (doubleTapAndHoldPeriod) {
             isPeriodKeyDown = true;
             video.playbackRate = maxSpeed;
-            addIndicator(video, maxSpeed);
+            addIndicator(findicator, video, maxSpeed);
             wasPeriodKeyHeld = true;
         } else {
             tapTimeoutPeriod = setTimeout(() => {
                 wasPeriodKeyHeld = true;
                 video.playbackRate = fastSpeed;
-                addIndicator(video, fastSpeed);
+                addIndicator(findicator, video, fastSpeed);
             }, 200);
         }
 
     } else if (e.key === ',') {
+        log("comma key down");
         clearTimeout(tapTimeoutComma);
 
         let currentTimeStamp = Date.now();
@@ -55,13 +58,13 @@ function keydownHandler(e) {
         if (doubleTapAndHoldComma) {
             isCommaKeyDown = true;
             video.playbackRate = minSpeed;
-            addIndicator(video, minSpeed);
+            addIndicator(findicator, video, minSpeed);
             wasCommaKeyHeld = true;
         } else {
             tapTimeoutComma = setTimeout(() => {
                 wasCommaKeyHeld = true;
                 video.playbackRate = slowSpeed;
-                addIndicator(video, slowSpeed);
+                addIndicator(findicator, video, slowSpeed);
             }, 200);
         }
     }
@@ -75,6 +78,7 @@ function keydownHandler(e) {
 
 
 function keyupHandler(e) {
+    const video = document.querySelector('video');
     if (video.paused) return;
 
     // PERIOD KEY
@@ -89,7 +93,7 @@ function keyupHandler(e) {
                         let adjustedSpeed = video.playbackRate + 0.05;
                         adjustedSpeed = Math.round(adjustedSpeed * 100) / 100;
 
-                        newSpeed(adjustedSpeed);
+                        newSpeed(video, adjustedSpeed);
                         addHotkeyIndicator(video, adjustedSpeed);
                     }
                 }
@@ -115,7 +119,7 @@ function keyupHandler(e) {
                     let adjustedSpeed = video.playbackRate - 0.05;
                     adjustedSpeed = Math.round(adjustedSpeed * 100) / 100;
 
-                    newSpeed(adjustedSpeed);
+                    newSpeed(video, adjustedSpeed);
                     addHotkeyIndicator(video, adjustedSpeed);
                     }
                 }
@@ -147,7 +151,9 @@ function getOriginalSpeed() {
 
 
 // MOUSE DOWN HANDLER
-async function mousedownHandler(moviePlayer, video, e) {
+async function mousedownHandler(findicator, moviePlayer, video, e) {
+    const fvideo = document.querySelector('video');
+    // log("mousedown fvideo", fvideo);
     log("mouse down");
     await getOriginalSpeed();
     if (!extensionEnabled) return;
@@ -158,6 +164,9 @@ async function mousedownHandler(moviePlayer, video, e) {
     initialX = e.clientX;
     initialY = e.clientY;
     setPersistentSpeed = false;
+
+    clearInterval(rewindInterval);
+    rewindInterval = null;
 
     const elements = document.elementsFromPoint(e.clientX, e.clientY);
 
@@ -173,8 +182,8 @@ async function mousedownHandler(moviePlayer, video, e) {
         
         log("long press");
         longPressFlag = true;
-        addIndicator(video, mainSpeed);
-        video.playbackRate = mainSpeed;
+        addIndicator(findicator, fvideo, mainSpeed);
+        fvideo.playbackRate = mainSpeed;
     }, 320);
 }
 
@@ -183,6 +192,8 @@ async function mousedownHandler(moviePlayer, video, e) {
 function mouseupHandler(moviePlayer, video, e) {
     log("mouse up");
     log("setPersistentSpeed", setPersistentSpeed);
+    const fvideo = document.querySelector('video');
+
 
 
     mouseIsDown = false;
@@ -207,11 +218,13 @@ function mouseupHandler(moviePlayer, video, e) {
 
     if (longPressFlag) {
         if (setPersistentSpeed) { //speed wasn't persisting but we're trying to set it to persist now
-            delayedSetPlayback(video, newPersistentSpeed, 50);
+            log("mouseup but setting speed to persist");
+            delayedSetPlayback(fvideo, newPersistentSpeed, 80);
             speedPersisting = true;
         } else { //speed wasn't persisting and we didn't set it to persist, go back to original speed
             log("mouseup ELSE. Original speed:", originalSpeed);
-            delayedSetPlayback(video, originalSpeed, 50);
+            // fvideo.playbackRate = 1;
+            delayedSetPlayback(fvideo, 1, 50);
             speedPersisting = false;
         }
 
@@ -227,6 +240,7 @@ function mouseupHandler(moviePlayer, video, e) {
 
 // CLICK HANDLER
 function clickHandler(moviePlayer, video, e) {
+    
     log("mouseclick");
     if (!extensionEnabled) return;
     mouseIsDown = false;
@@ -245,11 +259,15 @@ function clickHandler(moviePlayer, video, e) {
 
 
 // MOUSE MOVE HANDLER
-function handleMouseMove(moviePlayer, video, e) {
+function handleMouseMove(findicator, moviePlayer, video, e) {
     if (!extensionEnabled || !longPressFlag) return;
+    const fvideo = document.querySelector('video');
+    // log("mousemove fvideo", fvideo);
+
+
 
     // make it a bit easier to work with smaller videos
-    width = video.clientWidth;
+    width = fvideo.clientWidth;
     if (width < 450) {
         dynamicTier1 = tier1 / 1.8;
         dynamicTier2 = tier2 / 1.8;
@@ -267,38 +285,42 @@ function handleMouseMove(moviePlayer, video, e) {
 
     // X Axis will set the speed
     if (deltaX > dynamicTier2) {
-        newSpeed(maxSpeed);
+        newSpeed(findicator, fvideo, maxSpeed);
     } else if (deltaX > dynamicTier1 && deltaX < dynamicTier2) {
-        newSpeed(fastSpeed);
+        newSpeed(findicator, fvideo, fastSpeed);
     } else if (deltaX < -dynamicTier3) {
+        log("rewind");
         indicator.innerText = `REWIND`;
         if (firstRewind) {
+            log("first rewind");
             firstRewind = false;
-            simulateLeftArrowKeyPress()
+            simulateLeftArrowKeyPress(fvideo)
         }
         if (!rewindInterval) {
+            log("rewind interval");
             rewindInterval = setInterval(() => {
-                simulateLeftArrowKeyPress()
+                simulateLeftArrowKeyPress(fvideo)
             }, 800);
         }
     } else if (deltaX < -dynamicTier2) {
-        newSpeed(minSpeed);
+        newSpeed(findicator, fvideo, minSpeed);
     } else if (deltaX < -dynamicTier1) {
-        newSpeed(slowSpeed);
+        newSpeed(findicator, fvideo, slowSpeed);
     } else {
-        newSpeed(mainSpeed);
+        newSpeed(findicator, fvideo, mainSpeed);
     }
 
     // Y Axis will decide if speed is persistent after releasing click
     if (deltaY > dynamicVerticalTier || deltaY < -dynamicVerticalTier) {
+        log("dragged down");
         setPersistentSpeed = true;
-        newPersistentSpeed = video.playbackRate;
+        newPersistentSpeed = fvideo.playbackRate;
         indicator.style.fontWeight = 'bold';
-        indicator.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        indicator.style.backgroundColor = 'rgba(50, 50, 50, 0.7)';
     } else {
         setPersistentSpeed = false;
         indicator.style.fontWeight = 'normal';
-        indicator.style.backgroundColor = 'rgba(0, 0, 0, 0.45)';
+        indicator.style.backgroundColor = 'rgba(50, 50, 50, 0.45)';
     }
 }
 

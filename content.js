@@ -1,6 +1,7 @@
 
 let lastVideoElement = null;
-let indicator, initialX, initialY;
+let indicator = null;
+let initialX, initialY;
 let foundVideo = false;
 
 
@@ -58,6 +59,16 @@ function onDomContentLoaded() {
 
 function searchForVideoElements(node) {
   if (node.tagName === 'VIDEO') {
+    log("found video element");
+    if (lastVideoElement) {
+      log("removing event listeners");
+      video.removeEventListener('mousedown', mousedownHandler);
+      video.removeEventListener('mouseup', mouseupHandler);
+      video.removeEventListener('click', clickHandler);
+      video.removeEventListener('mousemove', handleMouseMove);
+      video.removeEventListener('keydown', keydownHandler);
+      video.removeEventListener('keyup', keyupHandler);
+    }
       init(node);
   }
   if (node.shadowRoot) {
@@ -77,7 +88,70 @@ if (document.readyState === 'loading') {
 }
 
 
-indicator = document.createElement('div');
+
+
+
+
+
+// URL observer
+const urlObserver = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.type === 'attributes' && mutation.attributeName === 'href') {
+      // URL has changed
+      const newURL = mutation.target.href;
+      console.log('URL changed to:', newURL);
+      // search for video elements in the new page
+      searchForVideoElements(document.body);
+    }
+  });
+});
+
+// Configure the observer to watch for changes in the href attribute of the <a> element
+const urlObserverConfig = {
+  attributes: true,
+  attributeFilter: ['href'],
+  subtree: true,
+};
+// Start observing the document body for changes
+urlObserver.observe(document.body, urlObserverConfig);
+
+
+// // Title Observer
+// const titleObserver = new MutationObserver((mutations) => {
+//   mutations.forEach((mutation) => {
+//     if (mutation.type === 'childList') {
+//       const videoTitleDiv = mutation.target.closest('div[data-uia="video-title"]');
+//       if (videoTitleDiv) {
+//         const episodeSpan = videoTitleDiv.querySelector('span:first-of-type');
+//         const titleSpan = videoTitleDiv.querySelector('span:last-of-type');
+//         if (episodeSpan && titleSpan) {
+//           const episodeText = episodeSpan.textContent;
+//           const titleText = titleSpan.textContent;
+//           console.log('Episode:', episodeText);
+//           console.log('Title:', titleText);
+//           searchForVideoElements(document.body);
+//         }
+//       }
+//     }
+//   });
+// });
+
+// const titleObserverConfig = {
+//   childList: true,
+//   subtree: true,
+// };
+
+// const videoTitleDiv = document.querySelector('div[data-uia="video-title"]');
+
+// if (videoTitleDiv) {
+//   titleObserver.observe(videoTitleDiv, titleObserverConfig);
+// } else {
+//   console.log('Video title div not found');
+// }
+
+
+
+
 
 
 
@@ -97,19 +171,31 @@ async function init(videoElement) {
     foundVideo = true; // we only want to init for one video, one time
     // video = document.querySelector('video');
     video = videoElement;
+    lastVideoElement = videoElement;
 
-    log("in IF");
+
+    // if (indicator) {
+    //   log("removing indicator");
+    //   indicator.remove();
+    // }
+
+    log("creating indicator");
+    indicator = document.createElement('div');
     indicator.classList.add('indicator');
-    videoElement.parentElement.appendChild(indicator);
+    // log("indicator", indicator);
+    // videoElement.parentElement.appendChild(indicator);
     const videoContainer = document.querySelector('.watch-video');
+    videoContainer.appendChild(indicator);
 
-    window.addEventListener('mousedown', mousedownHandler.bind(null, videoContainer, videoElement), true);
-    window.addEventListener('mouseup', mouseupHandler.bind(null, videoContainer, videoElement), true);
-    window.addEventListener('click', clickHandler.bind(null, videoContainer, videoElement), true);
-    window.addEventListener('mousemove', handleMouseMove.bind(null, videoContainer, videoElement), true);
+    videoContainer.addEventListener('mousedown', mousedownHandler.bind(null, indicator, videoContainer, videoElement), true);
+    videoContainer.addEventListener('mouseup', mouseupHandler.bind(null, videoContainer, videoElement), true);
+    videoContainer.addEventListener('click', clickHandler.bind(null, videoContainer, videoElement), true);
+    videoContainer.addEventListener('mousemove', handleMouseMove.bind(null, indicator, videoContainer, videoElement), true);
 
     videoContainer.addEventListener('keydown', keydownHandler);
     videoContainer.addEventListener('keyup', keyupHandler);
+
+    
 
 } catch (error) {
   console.error("Error in syncSpeeds:", error);
@@ -117,4 +203,9 @@ async function init(videoElement) {
 
 }
 
+
+
+// it's still activating the functions, it's just not affecting the video
+// need to look for the changes, thensearch for a new video element.
+// if one is found, need to detach the event listeners from the old video element and attach them to the new one.
 
