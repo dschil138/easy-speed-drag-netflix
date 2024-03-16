@@ -30,10 +30,6 @@ function log(...args) {
 }
 
 function newSpeed(findicator, video, rate) {
-    // let findicator = document.querySelector('.indicator');
-    // video.parentElement.querySelectorAll('.indicator').forEach((el) => {
-    //     findicator = el;
-    // });
     video.playbackRate = rate;
     findicator.innerText = `${rate}x Speed`;
     clearInterval(rewindInterval);
@@ -43,23 +39,6 @@ function newSpeed(findicator, video, rate) {
 
 
 function addIndicator(findicator, fvideo, rate) {
-    // query selector to find div with class 'indicator'
-    // let findicator = document.querySelector('.indicator');
-
-    // search parent element for div with class 'indicator'. then assign it to "findicator" variable
-    // fvideo.parentElement.querySelectorAll('.indicator').forEach((el) => {
-    //     findicator = el;
-    // });
-
-    // log('findicator1', findicator);
-
-    // if (!findicator) {
-    //     log("in if for findicator")
-    //     findicator = document.createElement('div');
-    //     findicator.classList.add('indicator');
-    //     fvideo.parentElement.appendChild(findicator);
-    //     log('findicator2', findicator);
-    // }
 
     findicator.innerText = `${rate}x Speed${rate === 16 ? ' (max)' : ''}`;
     findicator.style.fontSize = '2.5em';

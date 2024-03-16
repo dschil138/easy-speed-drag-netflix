@@ -11,8 +11,7 @@ let wasPeriodKeyHeld = false;
 let tapTimeoutComma;
 let wasCommaKeyHeld = false;
 
-    // if video is paused, hotkeys do nothing (preserves native hotkey function of frame scrubbing). If video is playing, a tap on the hot keys will initiate fine speed control. Holding the hot keys will initiate tier1 speeds, tap-hold will initiate tier2 speeds.
-
+// if video is paused, hotkeys do nothing (preserves native hotkey function of frame scrubbing). If video is playing, a tap on the hot keys will initiate fine speed control. Holding the hot keys will initiate tier1 speeds, tap-hold will initiate tier2 speeds.
 function keydownHandler(e) {
     if (!extensionEnabled || !hotkeysEnabled) return;
 
@@ -262,8 +261,6 @@ function clickHandler(moviePlayer, video, e) {
 function handleMouseMove(findicator, moviePlayer, video, e) {
     if (!extensionEnabled || !longPressFlag) return;
     const fvideo = document.querySelector('video');
-    // log("mousemove fvideo", fvideo);
-
 
 
     // make it a bit easier to work with smaller videos

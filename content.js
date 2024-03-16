@@ -15,8 +15,6 @@ chrome.runtime.onMessage.addListener(
 
 
 
-
-
 function syncSpeeds() {
   log("sync speeds");
   const wasEnabled = extensionEnabled;
@@ -89,10 +87,6 @@ if (document.readyState === 'loading') {
 
 
 
-
-
-
-
 // URL observer
 const urlObserver = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
@@ -112,46 +106,7 @@ const urlObserverConfig = {
   attributeFilter: ['href'],
   subtree: true,
 };
-// Start observing the document body for changes
 urlObserver.observe(document.body, urlObserverConfig);
-
-
-// // Title Observer
-// const titleObserver = new MutationObserver((mutations) => {
-//   mutations.forEach((mutation) => {
-//     if (mutation.type === 'childList') {
-//       const videoTitleDiv = mutation.target.closest('div[data-uia="video-title"]');
-//       if (videoTitleDiv) {
-//         const episodeSpan = videoTitleDiv.querySelector('span:first-of-type');
-//         const titleSpan = videoTitleDiv.querySelector('span:last-of-type');
-//         if (episodeSpan && titleSpan) {
-//           const episodeText = episodeSpan.textContent;
-//           const titleText = titleSpan.textContent;
-//           console.log('Episode:', episodeText);
-//           console.log('Title:', titleText);
-//           searchForVideoElements(document.body);
-//         }
-//       }
-//     }
-//   });
-// });
-
-// const titleObserverConfig = {
-//   childList: true,
-//   subtree: true,
-// };
-
-// const videoTitleDiv = document.querySelector('div[data-uia="video-title"]');
-
-// if (videoTitleDiv) {
-//   titleObserver.observe(videoTitleDiv, titleObserverConfig);
-// } else {
-//   console.log('Video title div not found');
-// }
-
-
-
-
 
 
 
@@ -160,7 +115,7 @@ async function init(videoElement) {
   log("init", videoElement);
   try {
     await syncSpeeds();
-    console.log("syncSpeeds completed successfully");
+    log("syncSpeeds completed successfully");
 
     url = window.location.href;
     if (!url.includes('watch/')) { return; }
@@ -169,21 +124,11 @@ async function init(videoElement) {
     if (foundVideo) return;
 
     foundVideo = true; // we only want to init for one video, one time
-    // video = document.querySelector('video');
     video = videoElement;
     lastVideoElement = videoElement;
 
-
-    // if (indicator) {
-    //   log("removing indicator");
-    //   indicator.remove();
-    // }
-
-    log("creating indicator");
     indicator = document.createElement('div');
     indicator.classList.add('indicator');
-    // log("indicator", indicator);
-    // videoElement.parentElement.appendChild(indicator);
     const videoContainer = document.querySelector('.watch-video');
     videoContainer.appendChild(indicator);
 
@@ -195,17 +140,8 @@ async function init(videoElement) {
     videoContainer.addEventListener('keydown', keydownHandler);
     videoContainer.addEventListener('keyup', keyupHandler);
 
-    
-
-} catch (error) {
-  console.error("Error in syncSpeeds:", error);
-}
+  } catch (error) {
+    console.error("Error in syncSpeeds:", error);
+  }
 
 }
-
-
-
-// it's still activating the functions, it's just not affecting the video
-// need to look for the changes, thensearch for a new video element.
-// if one is found, need to detach the event listeners from the old video element and attach them to the new one.
-
