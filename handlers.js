@@ -12,7 +12,7 @@ let tapTimeoutComma;
 let wasCommaKeyHeld = false;
 
 // if video is paused, hotkeys do nothing (preserves native hotkey function of frame scrubbing). If video is playing, a tap on the hot keys will initiate fine speed control. Holding the hot keys will initiate tier1 speeds, tap-hold will initiate tier2 speeds.
-function keydownHandler(e) {
+function keydownHandler(findicator, e) {
     if (!extensionEnabled || !hotkeysEnabled) return;
 
     const video = document.querySelector('video');
@@ -20,7 +20,6 @@ function keydownHandler(e) {
 
 
     if (e.key === '.') {
-        log("period key down");
         clearTimeout(tapTimeoutPeriod); // Clear any existing timeout to prevent interference
 
         let currentTimeStamp = Date.now();
@@ -32,19 +31,18 @@ function keydownHandler(e) {
 
         if (doubleTapAndHoldPeriod) {
             isPeriodKeyDown = true;
-            video.playbackRate = maxSpeed;
-            addIndicator(findicator, video, maxSpeed);
+            video.playbackRate = periodKeySpeed*2;
+            addIndicator(findicator, video, periodKeySpeed*2);
             wasPeriodKeyHeld = true;
         } else {
             tapTimeoutPeriod = setTimeout(() => {
                 wasPeriodKeyHeld = true;
-                video.playbackRate = fastSpeed;
-                addIndicator(findicator, video, fastSpeed);
+                video.playbackRate = periodKeySpeed;
+                addIndicator(findicator, video, periodKeySpeed);
             }, 200);
         }
 
     } else if (e.key === ',') {
-        log("comma key down");
         clearTimeout(tapTimeoutComma);
 
         let currentTimeStamp = Date.now();
@@ -56,29 +54,30 @@ function keydownHandler(e) {
 
         if (doubleTapAndHoldComma) {
             isCommaKeyDown = true;
-            video.playbackRate = minSpeed;
-            addIndicator(findicator, video, minSpeed);
+            video.playbackRate = commaKeySpeed/2;
+            addIndicator(findicator, video, commaKeySpeed/2);
             wasCommaKeyHeld = true;
         } else {
             tapTimeoutComma = setTimeout(() => {
                 wasCommaKeyHeld = true;
-                video.playbackRate = slowSpeed;
-                addIndicator(findicator, video, slowSpeed);
+                video.playbackRate = commaKeySpeed;
+                addIndicator(findicator, video, commaKeySpeed);
             }, 200);
         }
     }
 
-    else if (e.key === 'r') {
-        video.playbackRate = 1;
-        addHotkeyIndicator(video, 1);
-    }
+    // else if (e.key === 'r') {
+    //     video.playbackRate = 1;
+    //     addHotkeyIndicator(video, 1);
+    // }
 
 };
 
 
-function keyupHandler(e) {
-    const video = document.querySelector('video');
+function keyupHandler(findicator, e) {
     if (video.paused) return;
+    const fvideo = document.querySelector('video');
+
 
     // PERIOD KEY
     if (e.key === '.') {
@@ -92,14 +91,14 @@ function keyupHandler(e) {
                         let adjustedSpeed = video.playbackRate + 0.05;
                         adjustedSpeed = Math.round(adjustedSpeed * 100) / 100;
 
-                        newSpeed(video, adjustedSpeed);
+                        newSpeed(findicator, fvideo, adjustedSpeed);
                         addHotkeyIndicator(video, adjustedSpeed);
                     }
                 }
             }, 350); 
         }
         else {
-            indicator.style.display = 'none';
+            findicator.style.display = 'none';
             video.playbackRate = 1;
         }
         doubleTapAndHoldPeriod = false;
@@ -118,7 +117,7 @@ function keyupHandler(e) {
                     let adjustedSpeed = video.playbackRate - 0.05;
                     adjustedSpeed = Math.round(adjustedSpeed * 100) / 100;
 
-                    newSpeed(video, adjustedSpeed);
+                    newSpeed(findicator, fvideo, adjustedSpeed);
                     addHotkeyIndicator(video, adjustedSpeed);
                     }
                 }
@@ -126,7 +125,7 @@ function keyupHandler(e) {
             
         }
         else {
-            indicator.style.display = 'none';
+            findicator.style.display = 'none';
             video.playbackRate = 1;
         }
         doubleTapAndHoldComma = false;
@@ -134,6 +133,7 @@ function keyupHandler(e) {
         wasCommaKeyHeld = false;
     }
 };
+
 
 
 
@@ -218,12 +218,12 @@ function mouseupHandler(moviePlayer, video, e) {
     if (longPressFlag) {
         if (setPersistentSpeed) { //speed wasn't persisting but we're trying to set it to persist now
             log("mouseup but setting speed to persist");
-            delayedSetPlayback(fvideo, newPersistentSpeed, 80);
+            delayedSetPlayback(fvideo, newPersistentSpeed, 150);
             speedPersisting = true;
         } else { //speed wasn't persisting and we didn't set it to persist, go back to original speed
             log("mouseup ELSE. Original speed:", originalSpeed);
             // fvideo.playbackRate = 1;
-            delayedSetPlayback(fvideo, 1, 50);
+            delayedSetPlayback(fvideo, 1, 100);
             speedPersisting = false;
         }
 
@@ -242,12 +242,15 @@ function clickHandler(moviePlayer, video, e) {
     
     log("mouseclick");
     if (!extensionEnabled) return;
+    const fvideo = document.querySelector('video');
+
     mouseIsDown = false;
     clearTimeout(longPressTimer);
     clearInterval(rewindInterval);
     rewindInterval = null;
 
     if (longPressFlag) {
+        delayedSetPlayback(fvideo, 1, 100);
         log("ending long press");
         longPressFlag = false;
 

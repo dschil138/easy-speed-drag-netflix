@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Load any previously saved settings
   chrome.storage.sync.get(['minSpeed', 'slowSpeed', 'mainSpeed', 'fastSpeed', 'maxSpeed', 'commaKeySpeed', 'periodKeySpeed'], function(data) {
-    const commaKeySpeed = data.commaKeySpeed || 2;
-    const periodKeySpeed = data.periodKeySpeed || 5;
+    const commaKeySpeed = data.commaKeySpeed || 1.5;
+    const periodKeySpeed = data.periodKeySpeed || 4;
 
     const minSpeed = data.minSpeed || 1.1;
     const slowSpeed = data.slowSpeed || 1.2;

@@ -1,7 +1,7 @@
 let isDebugMode = false;
 let video, moviePlayer;
 let longPressTimer, longPressFlag = false;
-let originalSpeed = 1, minSpeed = 1.1, slowSpeed = 1.2, mainSpeed = 1.5, fastSpeed = 2, maxSpeed = 3, periodKeySpeed = 5, commaKeySpeed = 2;
+let originalSpeed = 1, minSpeed = 1.1, slowSpeed = 1.2, mainSpeed = 1.5, fastSpeed = 2, maxSpeed = 3, periodKeySpeed = 4, commaKeySpeed = 1.5;
 let setPersistentSpeed = false, speedPersisting = false, newPersistentSpeed;
 let firstRewind = true;
 let rewindInterval = null;
@@ -75,6 +75,7 @@ function findOriginalSpeed() {
 }
 
 function delayedSetPlayback(video, rate, delay) {
+    video.playbackRate = rate;
     setTimeout(() => {
         video.playbackRate = rate;
     }, delay);

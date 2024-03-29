@@ -25,8 +25,8 @@ function syncSpeeds() {
       mainSpeed = data.mainSpeed !== undefined ? data.mainSpeed : 1.5;
       fastSpeed = data.fastSpeed !== undefined ? data.fastSpeed : 2;
       maxSpeed = data.maxSpeed !== undefined ? data.maxSpeed : 3;
-      periodKeySpeed = data.periodKeySpeed !== undefined ? data.periodKeySpeed : 5;
-      commaKeySpeed = data.commaKeySpeed !== undefined ? data.commaKeySpeed : 2;
+      periodKeySpeed = data.periodKeySpeed !== undefined ? data.periodKeySpeed : 4;
+      commaKeySpeed = data.commaKeySpeed !== undefined ? data.commaKeySpeed : 1.5;
       extensionEnabled = data.extensionEnabled !== undefined ? data.extensionEnabled : true;
       hotkeysEnabled = data.hotkeysEnabled !== undefined ? data.hotkeysEnabled : true;
 
@@ -137,8 +137,11 @@ async function init(videoElement) {
     videoContainer.addEventListener('click', clickHandler.bind(null, videoContainer, videoElement), true);
     videoContainer.addEventListener('mousemove', handleMouseMove.bind(null, indicator, videoContainer, videoElement), true);
 
-    videoContainer.addEventListener('keydown', keydownHandler);
-    videoContainer.addEventListener('keyup', keyupHandler);
+    videoContainer.addEventListener('keydown', keydownHandler.bind(null, indicator,), true);
+    videoContainer.addEventListener('keyup', keyupHandler.bind(null, indicator), true);
+
+    // videoContainer.addEventListener('keydown', keydownHandler);
+    // videoContainer.addEventListener('keyup', keyupHandler);
 
   } catch (error) {
     console.error("Error in syncSpeeds:", error);
