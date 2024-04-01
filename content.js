@@ -60,12 +60,12 @@ function searchForVideoElements(node) {
     log("found video element");
     if (lastVideoElement) {
       log("removing event listeners");
-      video.removeEventListener('mousedown', mousedownHandler);
-      video.removeEventListener('mouseup', mouseupHandler);
-      video.removeEventListener('click', clickHandler);
-      video.removeEventListener('mousemove', handleMouseMove);
-      video.removeEventListener('keydown', keydownHandler);
-      video.removeEventListener('keyup', keyupHandler);
+      lastVideoElement.removeEventListener('mousedown', mousedownHandler);
+      lastVideoElement.removeEventListener('mouseup', mouseupHandler);
+      lastVideoElement.removeEventListener('click', clickHandler);
+      lastVideoElement.removeEventListener('mousemove', handleMouseMove);
+      lastVideoElement.removeEventListener('keydown', keydownHandler);
+      lastVideoElement.removeEventListener('keyup', keyupHandler);
     }
       init(node);
   }

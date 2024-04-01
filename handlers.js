@@ -137,35 +137,64 @@ function keyupHandler(findicator, e) {
 
 
 
-function getOriginalSpeed() {
+function getOriginalSpeed(fvideo) {
     return new Promise((resolve, reject) => {
         if (!speedPersisting) {
             log("mousedown NOT speedPersisting. Original speed:", originalSpeed);
-            originalSpeed = video.playbackRate;
+            if (fvideo) {
+                originalSpeed = fvideo.playbackRate;
+            }
             log("mousedown set originalSpeed to:", originalSpeed);
         }
         resolve();
     });
 }
 
+function findVideo() {
+    return new Promise((resolve, reject) => {
+        video = document.querySelector('video');
+        if (video) {
+            resolve(video);
+        } else {
+            reject("couldn't find video");
+        }
+    });
+}
+
 
 // MOUSE DOWN HANDLER
 async function mousedownHandler(findicator, moviePlayer, video, e) {
-    const fvideo = document.querySelector('video');
+    // const fvideo = document.querySelector('video');
+    let fvideo;
 
-    if (!fvideo.parentElement.classList.contains('indicator')) {
-        log("adding NEW indicator")
-        indicator = document.createElement('div');
-        indicator.classList.add('indicator');
-        fvideo.parentElement.appendChild(indicator);
+    try {
+        fvideo = await findVideo();
+        console.log(fvideo);
+    } catch (error) {
+        console.log(error);
+    }
+
+    try {
+        if (!fvideo.parentElement.classList.contains('indicator')) {
+            log("adding NEW indicator")
+            indicator = document.createElement('div');
+            indicator.classList.add('indicator');
+            fvideo.parentElement.appendChild(indicator);
         } else {
             indicator = fvideo.parentElement.querySelector('.indicator');
             log("indicator already here");
         }
+    }
+    catch (error) {
+        // console.log(error);
+    }
+
+
+    
 
     // log("mousedown fvideo", fvideo);
     log("mouse down");
-    await getOriginalSpeed();
+    await getOriginalSpeed(fvideo);
     if (!extensionEnabled) return;
     if (longPressTimer) clearTimeout(longPressTimer);
     longPressFlag = false;
