@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Easy Speed Drag Netflix",
-  "version": "1.41",
+  "version": "1.46",
   "description": "Click & drag left or right on Netflix videos to adjust the playback speed.",
   "permissions": ["activeTab", "storage", "scripting"],
   "host_permissions": [
