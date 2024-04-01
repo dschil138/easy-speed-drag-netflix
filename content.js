@@ -127,18 +127,18 @@ async function init(videoElement) {
     video = videoElement;
     lastVideoElement = videoElement;
 
-    indicator = document.createElement('div');
-    indicator.classList.add('indicator');
+    // indicator = document.createElement('div');
+    // indicator.classList.add('indicator');
     const videoContainer = document.querySelector('.watch-video');
-    videoContainer.appendChild(indicator);
+    // videoContainer.appendChild(indicator);
 
-    videoContainer.addEventListener('mousedown', mousedownHandler.bind(null, indicator, videoContainer, videoElement), true);
-    videoContainer.addEventListener('mouseup', mouseupHandler.bind(null, videoContainer, videoElement), true);
-    videoContainer.addEventListener('click', clickHandler.bind(null, videoContainer, videoElement), true);
-    videoContainer.addEventListener('mousemove', handleMouseMove.bind(null, indicator, videoContainer, videoElement), true);
+    window.addEventListener('mousedown', mousedownHandler.bind(null, indicator, videoContainer, videoElement), true);
+    window.addEventListener('mouseup', mouseupHandler.bind(null, videoContainer, videoElement), true);
+    window.addEventListener('click', clickHandler.bind(null, videoContainer, videoElement), true);
+    window.addEventListener('mousemove', handleMouseMove.bind(null, indicator, videoContainer, videoElement), true);
 
-    videoContainer.addEventListener('keydown', keydownHandler.bind(null, indicator,), true);
-    videoContainer.addEventListener('keyup', keyupHandler.bind(null, indicator), true);
+    window.addEventListener('keydown', keydownHandler.bind(null, indicator,), true);
+    window.addEventListener('keyup', keyupHandler.bind(null, indicator), true);
 
     // videoContainer.addEventListener('keydown', keydownHandler);
     // videoContainer.addEventListener('keyup', keyupHandler);

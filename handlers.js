@@ -152,6 +152,17 @@ function getOriginalSpeed() {
 // MOUSE DOWN HANDLER
 async function mousedownHandler(findicator, moviePlayer, video, e) {
     const fvideo = document.querySelector('video');
+
+    if (!fvideo.parentElement.classList.contains('indicator')) {
+        log("adding NEW indicator")
+        indicator = document.createElement('div');
+        indicator.classList.add('indicator');
+        fvideo.parentElement.appendChild(indicator);
+        } else {
+            indicator = fvideo.parentElement.querySelector('.indicator');
+            log("indicator already here");
+        }
+
     // log("mousedown fvideo", fvideo);
     log("mouse down");
     await getOriginalSpeed();
@@ -181,7 +192,7 @@ async function mousedownHandler(findicator, moviePlayer, video, e) {
         
         log("long press");
         longPressFlag = true;
-        addIndicator(findicator, fvideo, mainSpeed);
+        addIndicator(indicator, fvideo, mainSpeed);
         fvideo.playbackRate = mainSpeed;
     }, 320);
 }
@@ -285,9 +296,9 @@ function handleMouseMove(findicator, moviePlayer, video, e) {
 
     // X Axis will set the speed
     if (deltaX > dynamicTier2) {
-        newSpeed(findicator, fvideo, maxSpeed);
+        newSpeed(indicator, fvideo, maxSpeed);
     } else if (deltaX > dynamicTier1 && deltaX < dynamicTier2) {
-        newSpeed(findicator, fvideo, fastSpeed);
+        newSpeed(indicator, fvideo, fastSpeed);
     } else if (deltaX < -dynamicTier3) {
         log("rewind");
         indicator.innerText = `REWIND`;
@@ -303,11 +314,11 @@ function handleMouseMove(findicator, moviePlayer, video, e) {
             }, 800);
         }
     } else if (deltaX < -dynamicTier2) {
-        newSpeed(findicator, fvideo, minSpeed);
+        newSpeed(indicator, fvideo, minSpeed);
     } else if (deltaX < -dynamicTier1) {
-        newSpeed(findicator, fvideo, slowSpeed);
+        newSpeed(indicator, fvideo, slowSpeed);
     } else {
-        newSpeed(findicator, fvideo, mainSpeed);
+        newSpeed(indicator, fvideo, mainSpeed);
     }
 
     // Y Axis will decide if speed is persistent after releasing click
